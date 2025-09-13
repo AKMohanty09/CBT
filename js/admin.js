@@ -100,35 +100,46 @@ document.getElementById("createTestForm").addEventListener("submit", async (e) =
     const instructions = document.getElementById("instructions").value.trim();
     const fileInput = document.getElementById("csvFile");
 
-    if (!fileInput.files.length) { alert("Please select a CSV file!"); return; }
+    if (!fileInput.files.length) { 
+        alert("Please select a CSV file!"); 
+        return; 
+    }
+
+    // Prevent too large files (>10 MB)
+    if (fileInput.files[0].size > 10 * 1024 * 1024) {
+        alert("CSV file too large! Max size allowed is 10 MB.");
+        return;
+    }
 
     const reader = new FileReader();
     reader.onload = async (e) => {
         try {
             const text = e.target.result;
             const lines = text.trim().split("\n");
-            const questions = lines.slice(1).map(line => {
-                const [q, opt1, opt2, opt3, opt4, answerIndex, explanation] = line.split(",");
-                return {
-                    question: q.trim(),
-                    options: [opt1, opt2, opt3, opt4].map(x => x.trim()),
-                    answer: parseInt(answerIndex),
-                    explanation: explanation ? explanation.trim() : ""
-                };
-            });
 
-            const testData = {
+            // Create test doc first (without questions)
+            const testRef = await addDoc(collection(db, "tests"), {
                 title: testName,
                 positiveMark,
                 negativeMark,
                 duration,
                 instructions,
-                questions,
                 active: true,
                 createdAt: new Date().toISOString()
-            };
+            });
 
-            await addDoc(collection(db, "tests"), testData);
+            // Save each question in subcollection
+            for (let i = 1; i < lines.length; i++) {
+                const [q, opt1, opt2, opt3, opt4, answerIndex, explanation] = lines[i].split(",");
+                const questionData = {
+                    question: q.trim(),
+                    options: [opt1, opt2, opt3, opt4].map(x => x.trim()),
+                    answer: parseInt(answerIndex),
+                    explanation: explanation ? explanation.trim() : ""
+                };
+                await addDoc(collection(db, `tests/${testRef.id}/questions`), questionData);
+            }
+
             alert("Test created successfully!");
             document.getElementById("createTestForm").reset();
             loadTests();
@@ -137,6 +148,7 @@ document.getElementById("createTestForm").addEventListener("submit", async (e) =
             alert("Error processing CSV: " + err.message);
         }
     };
+
     reader.readAsText(fileInput.files[0]);
 });
 
