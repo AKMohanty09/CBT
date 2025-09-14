@@ -99,19 +99,29 @@ document.getElementById("createTestForm").addEventListener("submit", async (e) =
     const instructions = document.getElementById("instructions").value.trim();
     const fileInput = document.getElementById("csvFile");
 
-    if (!fileInput.files.length) { alert("Please select a CSV file!"); return; }
+    if (!fileInput.files.length) {
+        alert("Please select a CSV file!");
+        return;
+    }
 
     const reader = new FileReader();
     reader.onload = async (e) => {
         try {
             const text = e.target.result;
             const lines = text.trim().split("\n");
-            const questions = lines.slice(1).map(line => {
+
+            const questions = lines.slice(1).map((line, idx) => {
                 const [q, opt1, opt2, opt3, opt4, answerIndex, explanation] = line.split(",");
+
+                const ans = parseInt(answerIndex);
+                if (isNaN(ans) || ans < 1 || ans > 4) {
+                    throw new Error(`Invalid answer index in row ${idx + 2}. Must be between 1 and 4.`);
+                }
+
                 return {
                     question: q.trim(),
                     options: [opt1, opt2, opt3, opt4].map(x => x.trim()),
-                    answer: parseInt(answerIndex),
+                    answer: ans - 1, // ✅ convert to 0-based index
                     explanation: explanation ? explanation.trim() : ""
                 };
             });
@@ -136,8 +146,10 @@ document.getElementById("createTestForm").addEventListener("submit", async (e) =
             alert("Error processing CSV: " + err.message);
         }
     };
+
     reader.readAsText(fileInput.files[0]);
 });
+
 
 // ------------------ LOAD TESTS ------------------
 async function loadTests() {
