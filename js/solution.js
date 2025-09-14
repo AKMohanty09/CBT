@@ -26,16 +26,11 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // ------------------ BACK BUTTON ------------------
-// Back button functionality
-const backBtn = document.getElementById("backBtn");
-
-if (backBtn) {
-    backBtn.addEventListener("click", () => {
-        window.location.href = "student-dashboard.html"; // redirects to dashboard
+if (backDashboardBtn) {
+    backDashboardBtn.addEventListener("click", () => {
+        window.location.href = "student-dashboard.html";
     });
 }
-
-
 
 // ------------------ LOAD SOLUTION ------------------
 async function loadSolution(studentEmail, testId) {
@@ -53,27 +48,22 @@ async function loadSolution(studentEmail, testId) {
         // Fetch student's result
         const resultQuery = query(
             collection(db, "results"),
-            where("studentEmail", "==", studentEmail)
+            where("studentEmail", "==", studentEmail),
+            where("testTitle", "==", testData.title)
         );
         const snapshot = await getDocs(resultQuery);
 
-        // Find the result for this test
-        let studentResult = null;
-        snapshot.forEach(docSnap => {
-            const data = docSnap.data();
-            if (data.testTitle === testData.title) {
-                studentResult = data;
-            }
-        });
-
-        if (!studentResult) {
+        if (snapshot.empty) {
             solutionContainer.innerHTML = "<p>No submitted result found for this test.</p>";
             return;
         }
 
-        solutionContainer.innerHTML = "";
+        const studentResult = snapshot.docs[0].data();
         const answers = studentResult.answers || []; // stored answers
         const correctAnswers = testData.questions.map(q => q.answer);
+
+        solutionContainer.innerHTML = "";
+        const optionLabels = ["A", "B", "C", "D"];
 
         testData.questions.forEach((q, index) => {
             const userAns = answers[index] !== undefined ? answers[index] : null;
@@ -92,10 +82,16 @@ async function loadSolution(studentEmail, testId) {
                 </div>
                 <div class="options-container" style="display:none;">
                     ${q.options.map((opt, i) => {
-                        const selected = userAns === i ? "<b>(Your Answer)</b>" : "";
-                        const correct = correctAnswers[index] === i ? "<b>(Correct)</b>" : "";
-                        return `<p>${opt} ${selected} ${correct}</p>`;
-                    }).join("")}
+                const selected = userAns === i
+                    ? "<span style='color:#ffeb3b; font-weight:600;'>(Your Answer)</span>" // bright yellow
+                    : "";
+
+                const correct = correctAnswers[index] === i
+                    ? "<span style='color:#4caf50; font-weight:600;'>(Correct)</span>" // vibrant green
+                    : "";
+
+                return `<p><b>${optionLabels[i]}.</b> ${opt} ${selected} ${correct}</p>`;
+            }).join("")}
                     <p><b>Explanation:</b> ${q.explanation || "No explanation provided"}</p>
                 </div>
             `;
