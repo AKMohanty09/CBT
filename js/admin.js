@@ -111,17 +111,20 @@ document.getElementById("createTestForm").addEventListener("submit", async (e) =
             const lines = text.trim().split("\n");
 
             const questions = lines.slice(1).map((line, idx) => {
-                const [q, opt1, opt2, opt3, opt4, answerIndex, explanation] = line.split(",");
+                const [q, opt1, opt2, opt3, opt4, answerLetter, explanation] = line.split(",");
 
-                const ans = parseInt(answerIndex);
-                if (isNaN(ans) || ans < 1 || ans > 4) {
-                    throw new Error(`Invalid answer index in row ${idx + 2}. Must be between 1 and 4.`);
+                // Map A–D → 0–3
+                const answerMap = { A: 0, B: 1, C: 2, D: 3 };
+                const ans = answerMap[answerLetter?.trim().toUpperCase()];
+
+                if (ans === undefined) {
+                    throw new Error(`Invalid answer index in row ${idx + 2}. Must be A, B, C, or D.`);
                 }
 
                 return {
                     question: q.trim(),
                     options: [opt1, opt2, opt3, opt4].map(x => x.trim()),
-                    answer: ans - 1, // ✅ convert to 0-based index
+                    answer: ans, // store as 0-based index
                     explanation: explanation ? explanation.trim() : ""
                 };
             });
@@ -149,6 +152,9 @@ document.getElementById("createTestForm").addEventListener("submit", async (e) =
 
     reader.readAsText(fileInput.files[0]);
 });
+
+
+
 
 
 // ------------------ LOAD TESTS ------------------
