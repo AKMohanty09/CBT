@@ -43,7 +43,10 @@ async function login() {
       alert("Student logged in!");
       window.location.href = "student-dashboard.html";
     } catch (loginErr) {
-      if (loginErr.code === "auth/user-not-found") {
+      if (
+        loginErr.code === "auth/user-not-found" || 
+        loginErr.code === "auth/invalid-credential"
+      ) {
         // Auto-register new student
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await saveStudentToFirestore(userCredential.user);
