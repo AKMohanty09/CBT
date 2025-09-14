@@ -1,5 +1,5 @@
 import { auth, db } from "./firebase-config.js";
-import { collection, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+import { collection, doc, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -21,8 +21,9 @@ let currentIndex = 0;
 let answers = [];
 let duration = 0; // in minutes
 let timerInterval = null;
-let examPositiveMark = 1; // default positive mark
-let examNegativeMark = 0; // default negative mark
+let examPositiveMark = 1;
+let examNegativeMark = 0;
+let examStartTime = null; // ✅ track when student starts
 
 // ------------------ PAGE PROTECTION ------------------
 onAuthStateChanged(auth, async (user) => {
@@ -56,12 +57,12 @@ async function loadTest(id) {
         duration = data.duration;
         answers = Array(questions.length).fill(null);
 
-        // Set positive and negative marks from admin
         examPositiveMark = parseFloat(data.positiveMark) || 1;
         examNegativeMark = parseFloat(data.negativeMark) || 0;
 
         totalQuestionsElem.textContent = questions.length;
 
+        examStartTime = Date.now(); // ✅ mark start
         startTimer(duration * 60);
         renderQuestion();
     } catch (err) {
@@ -76,9 +77,15 @@ function renderQuestion() {
     questionText.textContent = q.question;
     optionsContainer.innerHTML = "";
 
+    const optionLabels = ["A", "B", "C", "D"];
+
     q.options.forEach((opt, i) => {
         const label = document.createElement("label");
-        label.innerHTML = `<input type="radio" name="option" value="${i}" ${answers[currentIndex] === i ? "checked" : ""}> ${opt}`;
+        label.classList.add("option-label");
+        label.innerHTML = `
+            <input type="radio" name="option" value="${i}" ${answers[currentIndex] === i ? "checked" : ""}>
+            <span><b>${optionLabels[i]}.</b> ${opt}</span>
+        `;
         optionsContainer.appendChild(label);
     });
 
@@ -106,6 +113,7 @@ clearBtn.addEventListener("click", () => {
     if (selected) selected.checked = false;
 });
 
+// ------------------ SAVE ANSWER ------------------
 function saveAnswer() {
     const selected = document.querySelector('input[name="option"]:checked');
     answers[currentIndex] = selected ? parseInt(selected.value) : null;
@@ -142,21 +150,36 @@ async function submitExam() {
 
     try {
         const user = auth.currentUser;
+        if (!user) {
+            alert("No user logged in!");
+            return;
+        }
 
-        const correctAnswers = questions.map(q => q.answer);
+        const correctAnswers = questions.map(q => q.answer); // 0-based
         let correct = 0, incorrect = 0, notAttempted = 0;
 
-        // Count correct, incorrect, not attempted
         answers.forEach((a, i) => {
-            if (a === null) notAttempted++;
-            else if (a === correctAnswers[i]) correct++;
-            else incorrect++;
+            if (a === null || a === undefined) {
+                notAttempted++;
+            } else if (a === correctAnswers[i]) {
+                correct++;
+            } else {
+                incorrect++;
+            }
         });
 
-        // Calculate total score based on admin settings
+        // ✅ score calculation
         let score = correct * examPositiveMark - incorrect * examNegativeMark;
-        if (score < 0) score = 0; // prevent negative total
+        if (score < 0) score = 0;
 
+        // ✅ Calculate time taken
+        const endTime = Date.now();
+        const timeTakenSec = Math.floor((endTime - examStartTime) / 1000);
+        const mins = Math.floor(timeTakenSec / 60);
+        const secs = timeTakenSec % 60;
+        const formattedTimeTaken = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+
+        // ✅ Store answers as well
         const resultData = {
             studentEmail: user.email,
             testTitle: examTitle.textContent,
@@ -164,21 +187,24 @@ async function submitExam() {
             correct,
             incorrect,
             notAttempted,
-            submittedAt: new Date().toISOString()
+            submittedAt: new Date().toISOString(),
+            timeTaken: formattedTimeTaken,
+            answers // ✅ added here for solution page
         };
 
-        await setDoc(doc(collection(db, "results"), `${user.uid}_${testId}_${Date.now()}`), resultData);
+        await addDoc(collection(db, "results"), resultData);
 
         clearInterval(timerInterval);
-        showResult(score, correct, incorrect, notAttempted);
+        showResult(score, correct, incorrect, notAttempted, formattedTimeTaken);
     } catch (err) {
         console.error(err);
         alert("Error submitting exam: " + err.message);
     }
 }
 
+
 // ------------------ SHOW RESULT ------------------
-function showResult(score, correct, incorrect, notAttempted) {
+function showResult(score, correct, incorrect, notAttempted, timeTaken) {
     document.getElementById("questionSection").style.display = "none";
     timerElem.style.display = "none";
     document.getElementById("resultSection").style.display = "block";
@@ -187,6 +213,7 @@ function showResult(score, correct, incorrect, notAttempted) {
     document.getElementById("resCorrect").textContent = correct;
     document.getElementById("resIncorrect").textContent = incorrect;
     document.getElementById("resNotAttempted").textContent = notAttempted;
+    document.getElementById("resTimeTaken").textContent = timeTaken; // ✅ show in UI
 }
 
 // ------------------ RESULT BUTTONS ------------------
