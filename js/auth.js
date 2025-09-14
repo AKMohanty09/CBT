@@ -28,6 +28,7 @@ async function login() {
   }
 
   try {
+    // Admin login
     if (email === "admin@gmail.com") {
       await signInWithEmailAndPassword(auth, email, password);
       alert("Admin logged in!");
@@ -43,13 +44,15 @@ async function login() {
       window.location.href = "student-dashboard.html";
     } catch (loginErr) {
       if (loginErr.code === "auth/user-not-found") {
-        // Auto-register student
+        // Auto-register new student
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await saveStudentToFirestore(userCredential.user);
         alert("Student registered and logged in!");
         window.location.href = "student-dashboard.html";
       } else if (loginErr.code === "auth/wrong-password") {
         alert("Incorrect password. Please try again.");
+      } else if (loginErr.code === "auth/email-already-in-use") {
+        alert("This email is already registered. Please log in.");
       } else if (loginErr.code === "auth/invalid-email") {
         alert("Invalid email format. Please check.");
       } else {
