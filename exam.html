@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam</title>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/exam.css">
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="exam-header">
+    <h1 id="examTitle">Exam</h1>
+    <div class="timer">Time Left: <span id="timer">00:00</span></div>
+  </header>
+
+  <!-- Main Exam Content -->
+  <main class="exam-content">
+    <div class="exam-main-container">
+
+      <!-- Legend Container -->
+      <div class="navigator-legend-container">
+        <button class="legend-toggle">
+          Legend <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="legend-items">
+          <div class="legend-item not-visited"><span></span> Not Visited</div>
+          <div class="legend-item visited-not-attempted"><span></span> Visited, Not Attempted</div>
+          <div class="legend-item attempted"><span></span> Attempted</div>
+          <div class="legend-item marked-for-review"><span></span> Marked for Review</div>
+        </div>
+      </div>
+
+      <!-- Second Row: Navigator + Question Section -->
+      <div class="second-row">
+        <!-- Question Navigator -->
+        <div id="questionNavigator" class="navigator-container"></div>
+
+        <!-- Question Section -->
+        <div id="questionSection" class="question-section">
+          <div id="questionContainer" class="question-container">
+            <div id="questionText" class="question-text"></div>
+            <div id="optionsContainer" class="options-container"></div>
+          </div>
+
+          <div class="navigation-buttons">
+            <button id="prevBtn" class="nav-btn">Previous</button>
+            <button id="nextBtn" class="nav-btn">Next</button>
+            <button id="clearBtn" class="nav-btn">Clear Response</button>
+            <button id="markReviewBtn" class="nav-btn">Mark for Review</button>
+            <button id="submitBtn" class="nav-btn submit-btn">Submit Exam</button>
+          </div>
+
+          <div class="progress-container">
+            Question <span id="currentQuestion">1</span> of <span id="totalQuestions">1</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Section -->
+      <div id="resultSection" class="result-section" style="display:none;">
+        <h2>Exam Result</h2>
+        <div class="result-card">
+          <p><b>Score:</b> <span id="resScore"></span></p>
+          <p><b>Correct:</b> <span id="resCorrect"></span></p>
+          <p><b>Incorrect:</b> <span id="resIncorrect"></span></p>
+          <p><b>Not Attempted:</b> <span id="resNotAttempted"></span></p>
+          <p><b>Time Taken:</b> <span id="resTimeTaken"></span></p>
+        </div>
+        <div class="result-buttons">
+          <button id="viewSolutionBtn" class="nav-btn">View Solution</button>
+          <button id="shareResultBtn" class="nav-btn">Share Result</button>
+          <button id="backDashboardBtn" class="nav-btn">Back to Dashboard</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module" src="js/exam.js"></script>
+</body>
+</html>
