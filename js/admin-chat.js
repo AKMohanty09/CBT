@@ -101,6 +101,9 @@ function loadStudentList() {
 function loadChatMessages(studentEmail) {
   const messagesQuery = query(collection(db, "chats"), orderBy("timestamp", "asc"));
   onSnapshot(messagesQuery, async (snapshot) => {
+    const atBottom =
+      chatMessagesEl.scrollHeight - chatMessagesEl.scrollTop <= chatMessagesEl.clientHeight + 50;
+
     chatMessagesEl.innerHTML = "";
     lastMessageDate = null;
 
@@ -143,7 +146,11 @@ function loadChatMessages(studentEmail) {
     if (chatMessagesEl.innerHTML.trim() === "") {
       chatMessagesEl.innerHTML = `<div class="no-chat">No messages yet with ${studentEmail}</div>`;
     }
-    chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+
+    // Scroll only if already at bottom before new messages
+    if (atBottom) {
+      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    }
   });
 }
 
