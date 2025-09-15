@@ -167,15 +167,16 @@ async function loadTests() {
             const card = document.createElement("div");
             card.classList.add("test-card");
             card.innerHTML = `
-            <div class="test-card-title">${t.title}</div>
-                <div><b>Duration:</b> ${t.duration} mins | <b>Active:</b> ${t.active}</div>
-                <div class="test-card-actions">
-                    <button onclick="toggleTestStatus('${docSnap.id}', ${t.active})">
-                        ${t.active ? "Deactivate" : "Activate"}
-                    </button>
-                    <button onclick="deleteTest('${docSnap.id}')">Delete</button>
-                </div>
-            `;
+    <div class="test-card-title">${t.title}</div>
+    <div><b>Duration:</b> ${t.duration} mins | <b>Active:</b> ${t.active}</div>
+    <div class="test-card-actions">
+        <button onclick="toggleTestStatus('${docSnap.id}', ${t.active})">
+            ${t.active ? "Deactivate" : "Activate"}
+        </button>
+        <button onclick="editTest('${docSnap.id}', '${t.title}', ${t.duration})">Edit</button>
+        <button onclick="deleteTest('${docSnap.id}')">Delete</button>
+    </div>
+`;
             testsDiv.appendChild(card);
         });
     } catch (err) {
@@ -210,6 +211,131 @@ window.deleteTest = async function(id) {
         alert("Error deleting test: " + err.message);
     }
 }
+
+
+
+
+
+
+
+// ------------------ EDIT TEST ------------------
+window.editTest = function (id, currentTitle, currentDuration) {
+    // If modal already exists, remove it
+    const oldModal = document.getElementById("editModal");
+    if (oldModal) oldModal.remove();
+
+    // Create modal wrapper
+    const modal = document.createElement("div");
+    modal.id = "editModal";
+    modal.innerHTML = `
+        <div class="modal-overlay"></div>
+        <div class="modal-box">
+            <h2>Edit Test</h2>
+            <label>Title:</label>
+            <input type="text" id="editTitle" value="${currentTitle}" />
+            <label>Duration (minutes):</label>
+            <input type="number" id="editDuration" value="${currentDuration}" min="1"/>
+            <div class="modal-actions">
+                <button id="saveEditBtn">Save</button>
+                <button id="cancelEditBtn">Cancel</button>
+            </div>
+        </div>
+    `;
+
+    // Modal CSS (inline for simplicity)
+    const style = document.createElement("style");
+    style.innerHTML = `
+        #editModal { 
+            position: fixed; top:0; left:0; right:0; bottom:0; 
+            display:flex; align-items:center; justify-content:center; 
+            z-index:1000;
+        }
+        .modal-overlay {
+            position:absolute; top:0; left:0; right:0; bottom:0;
+            background:rgba(0,0,0,0.5);
+        }
+        .modal-box {
+            position:relative;
+            background:#fff; 
+            padding:20px; 
+            border-radius:10px;
+            width:300px; 
+            max-width:90%;
+            z-index:1001;
+            font-family:Arial, sans-serif;
+        }
+        .modal-box h2 {
+            margin-top:0;
+        }
+        .modal-box label {
+            display:block;
+            margin:10px 0 5px;
+            font-weight:bold;
+        }
+        .modal-box input {
+            width:100%; 
+            padding:8px; 
+            margin-bottom:10px; 
+            border:1px solid #ccc; 
+            border-radius:5px;
+        }
+        .modal-actions {
+            display:flex; 
+            justify-content:flex-end; 
+            gap:10px;
+        }
+        .modal-actions button {
+            padding:8px 12px;
+            border:none; 
+            border-radius:5px;
+            cursor:pointer;
+        }
+        #saveEditBtn {
+            background:#4CAF50; 
+            color:white;
+        }
+        #cancelEditBtn {
+            background:#f44336; 
+            color:white;
+        }
+    `;
+
+    document.body.appendChild(style);
+    document.body.appendChild(modal);
+
+    // Cancel button
+    document.getElementById("cancelEditBtn").onclick = () => modal.remove();
+    document.querySelector(".modal-overlay").onclick = () => modal.remove();
+
+    // Save button
+    document.getElementById("saveEditBtn").onclick = async () => {
+        const newTitle = document.getElementById("editTitle").value.trim();
+        const newDuration = parseInt(document.getElementById("editDuration").value);
+
+        if (!newTitle || isNaN(newDuration) || newDuration <= 0) {
+            alert("Please enter valid values!");
+            return;
+        }
+
+        try {
+            await updateDoc(doc(db, "tests", id), {
+                title: newTitle,
+                duration: newDuration
+            });
+            alert("Test updated successfully!");
+            modal.remove();
+            loadTests();
+        } catch (err) {
+            console.error(err);
+            alert("Error updating test: " + err.message);
+        }
+    };
+};
+
+
+
+
+
 
 // Make sure in your module you already have:
 // import { collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
