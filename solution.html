@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Dynamic title will be updated by JS -->
+  <title>Exam Solution</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="images/favicon.png" type="image/png">
+
+  <!-- Meta description -->
+  <meta name="description" content="View detailed solutions for your exam questions. Check answers and understand concepts for better performance.">
+
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/solution.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="solution-header">
+    <h1 id="solutionTitle">Exam Solution</h1>
+    <button id="backDashboardBtn" class="nav-btn">Back To Dashboard</button>
+  </header>
+
+  <!-- Main Content -->
+  <main class="solution-content">
+    <div class="solution-container" id="solutionContainer">
+      <!-- Dynamic solution cards will be inserted here by solution.js -->
+    </div>
+  </main>
+
+  <!-- ========== Dynamic Title Script ========== -->
+  <script type="module">
+    import { db } from './js/firebase-config.js';
+    import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const testId = urlParams.get("testId");
+    const solutionTitleElem = document.getElementById("solutionTitle");
+
+    async function updateSolutionTitle() {
+      if (!testId) return;
+      try {
+        const docRef = doc(db, "tests", testId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const testTitle = docSnap.data().title || "Exam Solution";
+          document.title = `Exam Solution - ${testTitle}`;
+          solutionTitleElem.textContent = `Solution: ${testTitle}`;
+        }
+      } catch (err) {
+        console.warn("Could not update solution title:", err);
+      }
+    }
+
+    updateSolutionTitle();
+  </script>
+
+  <!-- JS -->
+  <script type="module" src="js/solution.js"></script>
+</body>
+</html>

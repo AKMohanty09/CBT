@@ -1,0 +1,189 @@
+/* Import font */
+body {
+  font-family: 'Karla', sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg, #0f172a, #1e293b); /* dark gradient */
+  color: #f1f5f9; /* light text */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.auth-wrapper {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+}
+
+.auth-container {
+  background: rgba(30, 41, 59, 0.8); /* glassy dark */
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease-in-out;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #38bdf8; /* cyan highlight */
+  font-family: 'Karla', sans-serif;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.8rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.input-group i {
+  margin-right: 10px;
+  color: #38bdf8;
+}
+
+.input-group input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 1rem;
+  background: transparent;
+  color: #f1f5f9;
+  font-family: 'Karla', sans-serif;
+}
+
+/* Placeholder style */
+.input-group input::placeholder {
+  color: #94a3b8; /* muted gray-blue */
+  font-family: 'Karla', sans-serif;
+  font-style: normal;
+}
+
+button {
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  background: #38bdf8;
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Karla', sans-serif;
+}
+
+button:hover {
+  background: #0ea5e9;
+  color: #fff;
+}
+
+.toggle-text {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  font-family: 'Karla', sans-serif;
+  color: #cbd5e1;
+}
+
+.toggle-text a {
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.toggle-text a:hover {
+  text-decoration: underline;
+}
+
+/* Form toggle */
+.form {
+  display: none;
+}
+
+.form.active {
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+  .auth-container {
+    padding: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Popup notification (top-centered glassmorphic) */
+.popup {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 300px;
+  max-width: 90%;
+  padding: 1.2rem 1.5rem;
+  border-radius: 14px;
+  font-weight: 600;
+  text-align: center;
+  display: none;
+  z-index: 9999;
+  font-family: 'Karla', sans-serif;
+
+  /* Glass effect */
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  /* Glow + shadow */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+
+  animation: fadeInOut 3s ease forwards;
+}
+
+/* Success style (green glow) */
+.popup.success {
+  border-left: 6px solid #22c55e;
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.9);
+  box-shadow: 0 0 18px rgba(34, 197, 94, 0.9);
+}
+
+/* Error style (red glow) */
+.popup.error {
+  border-left: 6px solid #ef4444;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.9);
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.9);
+}
+
+/* Fade animation */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  90% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+}
