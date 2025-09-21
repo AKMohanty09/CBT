@@ -29,6 +29,7 @@ const backBtn = document.getElementById("backBtn");
 let selectedStudentEmail = null;
 let lastMessageDate = null;
 let typingTimeout = null;
+let unsubscribeMessages = null; // to clean up old listeners
 
 chatInputArea.style.display = "none";
 chatMessagesEl.innerHTML = `<div class="no-chat">👉 Select a student to start chatting</div>`;
@@ -43,10 +44,8 @@ function loadStudentList() {
       return;
     }
 
-    // Prepare student list
     let students = [];
 
-    // Fetch students
     for (let docSnap of snapshot.docs) {
       const student = docSnap.data();
       if (!student.email) continue;
@@ -56,7 +55,7 @@ function loadStudentList() {
         const chatsRef = collection(db, "chats");
         const messagesQuery = query(
           chatsRef,
-          where("participants", "array-contains", student.email), // store participants as ["admin", studentEmail]
+          where("participants", "array-contains", student.email),
           orderBy("timestamp", "desc"),
           limit(1)
         );
@@ -75,10 +74,8 @@ function loadStudentList() {
       });
     }
 
-    // Sort by latest message time
     students.sort((a, b) => b.lastMsg - a.lastMsg);
 
-    // Render UI
     studentListEl.innerHTML = "";
     students.forEach((student) => {
       const li = document.createElement("li");
@@ -92,7 +89,6 @@ function loadStudentList() {
       badge.style.display = "none";
       li.appendChild(badge);
 
-      // Listen for unread messages for this student
       const messagesQuery = query(
         collection(db, "chats"),
         where("from", "==", student.email),
@@ -109,7 +105,6 @@ function loadStudentList() {
         badge.style.display = unreadCount > 0 ? "inline-block" : "none";
       });
 
-      // Click event → open chat
       li.addEventListener("click", () => {
         selectedStudentEmail = student.email;
         chatHeaderEl.textContent = student.name;
@@ -136,8 +131,11 @@ function loadStudentList() {
 
 // ---------------- Load Chat Messages ----------------
 function loadChatMessages(studentEmail) {
+  // Clean up old listener
+  if (unsubscribeMessages) unsubscribeMessages();
+
   const messagesQuery = query(collection(db, "chats"), orderBy("timestamp", "asc"));
-  onSnapshot(messagesQuery, async (snapshot) => {
+  unsubscribeMessages = onSnapshot(messagesQuery, async (snapshot) => {
     chatMessagesEl.innerHTML = "";
     lastMessageDate = null;
 
@@ -187,7 +185,8 @@ function loadChatMessages(studentEmail) {
     if (chatMessagesEl.innerHTML.trim() === "") {
       chatMessagesEl.innerHTML = `<div class="no-chat">No messages yet with ${studentEmail}</div>`;
     }
-    chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+
+    // ❌ removed auto-scroll
   });
 }
 
@@ -199,7 +198,7 @@ sendMessageBtn.addEventListener("click", async () => {
   await addDoc(collection(db, "chats"), {
     from: "admin",
     to: selectedStudentEmail,
-    participants: ["admin", selectedStudentEmail], // useful for queries
+    participants: ["admin", selectedStudentEmail],
     timestamp: serverTimestamp(),
     text,
     seenByAdmin: true,
