@@ -251,27 +251,28 @@ clearChatBtn.addEventListener("click", async () => {
   if (!confirm(`Are you sure you want to clear chat with ${selectedStudentEmail}?`)) return;
 
   try {
-    // Query all messages between admin and selected student
+    // Get all messages that involve both admin and selected student
     const messagesQuery = query(
       collection(db, "chats"),
       where("participants", "array-contains", selectedStudentEmail)
     );
 
     const snapshot = await getDocs(messagesQuery);
-    const batchDeletes = [];
+    const deletePromises = [];
 
     snapshot.forEach((docSnap) => {
       const msg = docSnap.data();
-      // Only delete messages where participants contain both admin & selected student
+      // Delete only if participants include both admin & selected student
       if (msg.participants.includes("admin") && msg.participants.includes(selectedStudentEmail)) {
-        batchDeletes.push(deleteDoc(doc(db, "chats", docSnap.id)));
+        deletePromises.push(deleteDoc(doc(db, "chats", docSnap.id)));
       }
     });
 
-    await Promise.all(batchDeletes);
+    await Promise.all(deletePromises);
 
+    // Clear the chat window
     chatMessagesEl.innerHTML = `<div class="no-chat">Chat cleared with ${selectedStudentEmail}</div>`;
-    alert("Chat cleared for both sides successfully!");
+    alert("All chats between admin and student cleared successfully!");
   } catch (err) {
     console.error("Error clearing chat:", err);
     alert("Failed to clear chat. Try again!");
