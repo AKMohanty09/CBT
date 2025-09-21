@@ -11,6 +11,7 @@ import {
   getDocs,
   deleteDoc,
   updateDoc,
+  where,
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
 // Elements
@@ -19,13 +20,13 @@ const chatInputEl = document.getElementById("chatInput");
 const sendMessageBtn = document.getElementById("sendMessageBtn");
 const onlineIndicatorEl = document.getElementById("onlineIndicator");
 const typingIndicatorEl = document.getElementById("typingIndicator");
-const clearChatBtn = document.getElementById("clearChatBtn"); // add button in HTML
+const clearChatBtn = document.getElementById("clearChatBtn"); // button in HTML
 
 let lastMessageDate = null;
 let typingTimeout = null;
 let unsubscribeChat = null;
 
-// ===== Helper: Scroll chat to bottom (only if near bottom) =====
+// ===== Helper: Scroll chat to bottom =====
 function scrollToBottom(force = false) {
   const threshold = 100;
   const isNearBottom =
@@ -44,7 +45,6 @@ function scrollToBottom(force = false) {
 function loadChat() {
   if (!auth.currentUser) return;
 
-  // cleanup old listener
   if (unsubscribeChat) unsubscribeChat();
 
   const messagesQuery = query(
@@ -60,8 +60,8 @@ function loadChat() {
       const msg = docSnap.data();
 
       if (
-        (msg.from === auth.currentUser.email && msg.to === "admin") ||
-        (msg.from === "admin" && msg.to === auth.currentUser.email)
+        msg.participants?.includes(auth.currentUser.email) &&
+        msg.participants?.includes("admin")
       ) {
         const msgDate = msg.timestamp?.toDate().toDateString();
         const msgTime =
@@ -69,7 +69,7 @@ function loadChat() {
             ?.toDate()
             .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) || "";
 
-        // date separator
+        // Date separator
         if (lastMessageDate !== msgDate && msgDate) {
           const dateSeparator = document.createElement("div");
           dateSeparator.classList.add("date-separator");
@@ -78,7 +78,7 @@ function loadChat() {
           lastMessageDate = msgDate;
         }
 
-        // message bubble
+        // Message bubble
         const messageDiv = document.createElement("div");
         messageDiv.classList.add(
           "message",
@@ -103,7 +103,7 @@ function loadChat() {
       chatMessagesEl.innerHTML = `<div class="no-chat">Start chatting with admin...</div>`;
     }
 
-    scrollToBottom(); // only scroll if near bottom
+    scrollToBottom();
   });
 }
 
@@ -116,12 +116,13 @@ sendMessageBtn.addEventListener("click", async () => {
     await addDoc(collection(db, "chats"), {
       from: auth.currentUser.email,
       to: "admin",
+      participants: [auth.currentUser.email, "admin"], // ✅ Added
       text,
       timestamp: serverTimestamp(),
     });
 
     chatInputEl.value = "";
-    await updatePresence(); // update lastSeen and online
+    await updatePresence();
     scrollToBottom(true);
   } catch (err) {
     console.error("Error sending message:", err);
@@ -181,8 +182,8 @@ async function updatePresence() {
 async function initStudentStatus() {
   if (!auth.currentUser) return;
 
-  await updatePresence(); // Initial presence
-  setInterval(updatePresence, 5000); // ping every 5 sec
+  await updatePresence();
+  setInterval(updatePresence, 5000);
 
   window.addEventListener("beforeunload", async () => {
     if (!auth.currentUser) return;
@@ -215,8 +216,8 @@ clearChatBtn.addEventListener("click", async () => {
     snapshot.forEach((docSnap) => {
       const msg = docSnap.data();
       if (
-        msg.participants.includes("admin") &&
-        msg.participants.includes(auth.currentUser.email)
+        msg.participants?.includes("admin") &&
+        msg.participants?.includes(auth.currentUser.email)
       ) {
         deletePromises.push(deleteDoc(doc(db, "chats", docSnap.id)));
       }
@@ -237,7 +238,7 @@ auth.onAuthStateChanged((user) => {
     initStudentStatus();
     loadChat();
     monitorAdminStatus();
-    clearChatBtn.style.display = "inline-flex"; // show clear button when logged in
+    clearChatBtn.style.display = "inline-flex";
   } else {
     if (unsubscribeChat) unsubscribeChat();
     chatMessagesEl.innerHTML = `<div class="no-chat">Please login to start chatting.</div>`;
