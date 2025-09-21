@@ -13,16 +13,66 @@ import {
   where,
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
+// ===== Elements =====
 const chatMessagesEl = document.getElementById("chatMessages");
 const chatInputEl = document.getElementById("chatInput");
 const sendMessageBtn = document.getElementById("sendMessageBtn");
 const onlineIndicatorEl = document.getElementById("onlineIndicator");
 const typingIndicatorEl = document.getElementById("typingIndicator");
-const clearChatBtn = document.getElementById("clearChatBtn"); // 🔥 button in HTML
+const clearChatBtn = document.getElementById("clearChatBtn");
 
+// ===== State =====
 let lastMessageDate = null;
 let typingTimeout = null;
 let unsubscribeChat = null;
+
+// ===== Custom Snackbar Function =====
+function showSnackbar(message, type = "success", duration = 3000) {
+  const container = document.getElementById("customAlertContainer");
+  if (!container) return;
+
+  const alertDiv = document.createElement("div");
+  alertDiv.className = `custom-alert ${type}`;
+  alertDiv.textContent = message;
+  container.appendChild(alertDiv);
+
+  setTimeout(() => {
+    alertDiv.style.opacity = 0;
+    setTimeout(() => container.removeChild(alertDiv), 400);
+  }, duration);
+}
+
+// ===== Custom Confirm Dialog =====
+function showConfirm(message) {
+  return new Promise((resolve) => {
+    const container = document.getElementById("customAlertContainer");
+    if (!container) return resolve(false);
+
+    const alertDiv = document.createElement("div");
+    alertDiv.className = "custom-alert confirm";
+    alertDiv.innerHTML = `
+      <div>${message}</div>
+      <div class="alert-buttons">
+        <button class="cancel-btn">Cancel</button>
+        <button class="confirm-btn">Yes</button>
+      </div>
+    `;
+    container.appendChild(alertDiv);
+
+    const cancelBtn = alertDiv.querySelector(".cancel-btn");
+    const confirmBtn = alertDiv.querySelector(".confirm-btn");
+
+    cancelBtn.addEventListener("click", () => {
+      alertDiv.remove();
+      resolve(false);
+    });
+
+    confirmBtn.addEventListener("click", () => {
+      alertDiv.remove();
+      resolve(true);
+    });
+  });
+}
 
 // ===== Scroll helper =====
 function scrollToBottom(force = false) {
@@ -57,7 +107,6 @@ function loadChat() {
     snapshot.forEach((docSnap) => {
       const msg = docSnap.data();
 
-      // ✅ support both old (from/to) and new (participants) format
       const isChatMsg =
         (msg.from === auth.currentUser.email && msg.to === "admin") ||
         (msg.from === "admin" && msg.to === auth.currentUser.email) ||
@@ -71,7 +120,6 @@ function loadChat() {
             ?.toDate()
             .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) || "";
 
-        // Date separator
         if (lastMessageDate !== msgDate && msgDate) {
           const dateSeparator = document.createElement("div");
           dateSeparator.classList.add("date-separator");
@@ -80,7 +128,6 @@ function loadChat() {
           lastMessageDate = msgDate;
         }
 
-        // Message bubble
         const messageDiv = document.createElement("div");
         messageDiv.classList.add(
           "message",
@@ -118,7 +165,7 @@ sendMessageBtn.addEventListener("click", async () => {
     await addDoc(collection(db, "chats"), {
       from: auth.currentUser.email,
       to: "admin",
-      participants: [auth.currentUser.email, "admin"], // 🔥 new format
+      participants: [auth.currentUser.email, "admin"],
       text,
       timestamp: serverTimestamp(),
     });
@@ -128,6 +175,7 @@ sendMessageBtn.addEventListener("click", async () => {
     scrollToBottom(true);
   } catch (err) {
     console.error("Error sending message:", err);
+    showSnackbar("Failed to send message.", "error");
   }
 });
 
@@ -149,10 +197,7 @@ chatInputEl.addEventListener("input", async () => {
     if (!auth.currentUser) return;
     await setDoc(
       doc(db, "status", auth.currentUser.email),
-      {
-        typing: false,
-        lastSeen: serverTimestamp(),
-      },
+      { typing: false, lastSeen: serverTimestamp() },
       { merge: true }
     );
   }, 1500);
@@ -204,7 +249,11 @@ async function initStudentStatus() {
 // ===== Clear chat =====
 clearChatBtn.addEventListener("click", async () => {
   if (!auth.currentUser) return;
-  if (!confirm("Clear all chat with admin?")) return;
+
+  const confirmClear = await showConfirm(
+    "Clear all chat with admin?"
+  );
+  if (!confirmClear) return;
 
   try {
     const messagesQuery = query(
@@ -217,8 +266,6 @@ clearChatBtn.addEventListener("click", async () => {
 
     snapshot.forEach((docSnap) => {
       const msg = docSnap.data();
-
-      // ✅ delete if admin + current student are in conversation
       if (
         (msg.from === auth.currentUser.email && msg.to === "admin") ||
         (msg.from === "admin" && msg.to === auth.currentUser.email) ||
@@ -230,11 +277,11 @@ clearChatBtn.addEventListener("click", async () => {
     });
 
     await Promise.all(batchDeletes);
-
     chatMessagesEl.innerHTML = `<div class="no-chat">Chat cleared successfully!</div>`;
+    showSnackbar("Chat cleared successfully!", "success");
   } catch (err) {
     console.error("Error clearing chat:", err);
-    alert("Failed to clear chat. Try again.");
+    showSnackbar("Failed to clear chat. Try again.", "error");
   }
 });
 
@@ -244,7 +291,7 @@ auth.onAuthStateChanged((user) => {
     initStudentStatus();
     loadChat();
     monitorAdminStatus();
-    clearChatBtn.style.display = "inline-flex"; // 🔥 show clear button
+    clearChatBtn.style.display = "inline-flex";
   } else {
     if (unsubscribeChat) unsubscribeChat();
     chatMessagesEl.innerHTML =
