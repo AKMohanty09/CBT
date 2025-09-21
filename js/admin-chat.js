@@ -12,8 +12,10 @@ import {
   getDocs,
   where,
   limit,
+  deleteDoc,
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
+// Elements
 const studentListEl = document.getElementById("studentList");
 const chatHeaderEl = document.getElementById("chatTitle");
 const chatMessagesEl = document.getElementById("chatMessages");
@@ -25,14 +27,16 @@ const chatInputArea = document.getElementById("chatInputArea");
 const chatWindow = document.getElementById("chatWindow");
 const studentListWrapper = document.getElementById("studentListWrapper");
 const backBtn = document.getElementById("backBtn");
+const clearChatBtn = document.getElementById("clearChatBtn");
 
 let selectedStudentEmail = null;
 let lastMessageDate = null;
 let typingTimeout = null;
-let unsubscribeMessages = null; // to clean up old listeners
+let unsubscribeMessages = null;
 
 chatInputArea.style.display = "none";
 chatMessagesEl.innerHTML = `<div class="no-chat">👉 Select a student to start chatting</div>`;
+clearChatBtn.style.display = "none"; // initially hidden
 
 // ---------------- Load Student List ----------------
 function loadStudentList() {
@@ -109,6 +113,7 @@ function loadStudentList() {
         selectedStudentEmail = student.email;
         chatHeaderEl.textContent = student.name;
         chatInputArea.style.display = "flex";
+        clearChatBtn.style.display = "inline-flex"; // show clear chat button
 
         document.querySelectorAll("#studentList li").forEach((el) =>
           el.classList.remove("active")
@@ -131,7 +136,6 @@ function loadStudentList() {
 
 // ---------------- Load Chat Messages ----------------
 function loadChatMessages(studentEmail) {
-  // Clean up old listener
   if (unsubscribeMessages) unsubscribeMessages();
 
   const messagesQuery = query(collection(db, "chats"), orderBy("timestamp", "asc"));
@@ -146,11 +150,10 @@ function loadChatMessages(studentEmail) {
         (msg.from === "admin" && msg.to === studentEmail)
       ) {
         const msgDate = msg.timestamp?.toDate().toDateString();
-        const msgTime =
-          msg.timestamp?.toDate().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }) || "";
+        const msgTime = msg.timestamp?.toDate().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }) || "";
 
         if (lastMessageDate !== msgDate && msgDate) {
           const dateSeparator = document.createElement("div");
@@ -185,8 +188,6 @@ function loadChatMessages(studentEmail) {
     if (chatMessagesEl.innerHTML.trim() === "") {
       chatMessagesEl.innerHTML = `<div class="no-chat">No messages yet with ${studentEmail}</div>`;
     }
-
-    // ❌ removed auto-scroll
   });
 }
 
@@ -242,6 +243,27 @@ function monitorStudentStatus(studentEmail) {
 backBtn.addEventListener("click", () => {
   chatWindow.style.display = "none";
   studentListWrapper.style.display = "flex";
+});
+
+// ---------------- Clear Chat ----------------
+clearChatBtn.addEventListener("click", async () => {
+  if (!selectedStudentEmail) return;
+  if (!confirm(`Are you sure you want to clear chat with ${selectedStudentEmail}?`)) return;
+
+  const messagesQuery = query(
+    collection(db, "chats"),
+    where("participants", "array-contains", selectedStudentEmail)
+  );
+
+  const snapshot = await getDocs(messagesQuery);
+  const batchDeletes = [];
+  snapshot.forEach((docSnap) => {
+    batchDeletes.push(deleteDoc(doc(db, "chats", docSnap.id)));
+  });
+
+  await Promise.all(batchDeletes);
+
+  chatMessagesEl.innerHTML = `<div class="no-chat">Chat cleared with ${selectedStudentEmail}</div>`;
 });
 
 // ---------------- Initialize Admin Status ----------------
