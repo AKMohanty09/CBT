@@ -377,6 +377,20 @@ body {
   display: none;
 }
 
+/* ✅ Clear Chat Button */
+.clear-chat-btn {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-size: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.clear-chat-btn:hover {
+  color: #c0392b;
+}
+
 .chat-messages {
   flex: 1;
   padding: 16px;
@@ -528,11 +542,12 @@ body {
 
   .chat-container {
     flex-direction: column;
+    height: 85vh;
   }
 
   .chat-messages {
     padding: 12px;
-    max-height: 75vh;
+    max-height: 70vh;
   }
 
   .chat-input-area input {
@@ -544,25 +559,20 @@ body {
   }
 }
 
-
 /* =================== Custom Alert Container =================== */
 #customAlertContainer {
   position: fixed;
   top: 20px;
-  /* Distance from top */
   left: 50%;
   transform: translateX(-50%);
-  /* horizontally center */
   z-index: 9999;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  /* spacing between stacked alerts */
   max-width: 90%;
   pointer-events: none;
   width: auto;
   align-items: center;
-  /* ensure alerts are centered */
 }
 
 /* =================== Individual Alert =================== */
@@ -576,16 +586,13 @@ body {
   flex-direction: column;
   gap: 8px;
   min-width: 240px;
-  /* small screens */
   max-width: 400px;
   width: 100%;
-  /* take full width up to max-width */
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
   color: white;
   border-left: 5px solid;
   animation: slideDown 0.4s ease forwards;
   transform: translateY(-60px);
-  /* start above the top */
 }
 
 /* =================== Alert Types =================== */
@@ -649,13 +656,10 @@ body {
   from {
     opacity: 0;
     transform: translateY(-60px);
-    /* start above */
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
-    /* slide down to top */
   }
 }
 
