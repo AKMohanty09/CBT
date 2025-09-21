@@ -8,13 +8,18 @@ import {
   serverTimestamp,
   doc,
   setDoc,
+  getDocs,
+  deleteDoc,
+  updateDoc,
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
+// Elements
 const chatMessagesEl = document.getElementById("chatMessages");
 const chatInputEl = document.getElementById("chatInput");
 const sendMessageBtn = document.getElementById("sendMessageBtn");
 const onlineIndicatorEl = document.getElementById("onlineIndicator");
 const typingIndicatorEl = document.getElementById("typingIndicator");
+const clearChatBtn = document.getElementById("clearChatBtn"); // add button in HTML
 
 let lastMessageDate = null;
 let typingTimeout = null;
@@ -193,14 +198,49 @@ async function initStudentStatus() {
   });
 }
 
+// ===== Clear chat for student =====
+clearChatBtn.addEventListener("click", async () => {
+  if (!auth.currentUser) return;
+  if (!confirm("Are you sure you want to clear all chat with admin?")) return;
+
+  try {
+    const messagesQuery = query(
+      collection(db, "chats"),
+      where("participants", "array-contains", auth.currentUser.email)
+    );
+
+    const snapshot = await getDocs(messagesQuery);
+    const deletePromises = [];
+
+    snapshot.forEach((docSnap) => {
+      const msg = docSnap.data();
+      if (
+        msg.participants.includes("admin") &&
+        msg.participants.includes(auth.currentUser.email)
+      ) {
+        deletePromises.push(deleteDoc(doc(db, "chats", docSnap.id)));
+      }
+    });
+
+    await Promise.all(deletePromises);
+    chatMessagesEl.innerHTML = `<div class="no-chat">Chat cleared successfully!</div>`;
+    alert("All chats with admin cleared!");
+  } catch (err) {
+    console.error("Error clearing chat:", err);
+    alert("Failed to clear chat. Try again!");
+  }
+});
+
 // ===== Auth state =====
 auth.onAuthStateChanged((user) => {
   if (user) {
     initStudentStatus();
     loadChat();
     monitorAdminStatus();
+    clearChatBtn.style.display = "inline-flex"; // show clear button when logged in
   } else {
     if (unsubscribeChat) unsubscribeChat();
     chatMessagesEl.innerHTML = `<div class="no-chat">Please login to start chatting.</div>`;
+    clearChatBtn.style.display = "none";
   }
 });
