@@ -58,26 +58,32 @@
       <div id="resultsList" class="cards-container"></div>
     </section>
 
-    <!-- Chat With Admin -->
-    <section id="chatWithAdminSection" class="tab-content">
-      <div class="chat-container">
-        <div class="chat-window">
-          <div class="chat-header">
-            <span id="onlineIndicator" class="online-status">Offline</span>
-            <span class="chat-title">Admin Chat</span>
-            <span id="typingIndicator" class="typing-indicator">Typing...</span>
-          </div>
+   <!-- Chat With Admin -->
+<section id="chatWithAdminSection" class="tab-content">
+  <div class="chat-container">
+    <div class="chat-window">
+      <div class="chat-header">
+        <span id="onlineIndicator" class="online-status">Offline</span>
+        <span class="chat-title">Admin Chat</span>
+        <span id="typingIndicator" class="typing-indicator">Typing...</span>
 
-          <div id="chatMessages" class="chat-messages">
-            <!-- Messages will be appended here -->
-          </div>
-          <div class="chat-input-area">
-            <input type="text" id="chatInput" placeholder="Type a message..." />
-            <button id="sendMessageBtn">Send</button>
-          </div>
-        </div>
+        <!-- Delete Chat Button -->
+        <button id="clearAdminChatBtn" class="clear-chat-btn">
+          <i class="fas fa-trash"></i>
+        </button>
       </div>
-    </section>
+
+      <div id="chatMessages" class="chat-messages">
+        <!-- Messages will be appended here -->
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Type a message..." />
+        <button id="sendMessageBtn">Send</button>
+      </div>
+    </div>
+  </div>
+</section>
+
 
   </main>
 
