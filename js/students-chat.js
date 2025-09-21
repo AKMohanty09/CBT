@@ -18,11 +18,16 @@ const typingIndicatorEl = document.getElementById("typingIndicator");
 
 let lastMessageDate = null;
 let typingTimeout = null;
+let unsubscribeChat = null;
 
-// ===== Helper: Scroll chat to bottom =====
+// ===== Helper: Scroll chat to bottom (only if near bottom) =====
 function scrollToBottom(force = false) {
   const threshold = 100;
-  const isNearBottom = chatMessagesEl.scrollHeight - chatMessagesEl.scrollTop - chatMessagesEl.clientHeight < threshold;
+  const isNearBottom =
+    chatMessagesEl.scrollHeight -
+      chatMessagesEl.scrollTop -
+      chatMessagesEl.clientHeight <
+    threshold;
   if (isNearBottom || force) {
     requestAnimationFrame(() => {
       chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
@@ -34,19 +39,32 @@ function scrollToBottom(force = false) {
 function loadChat() {
   if (!auth.currentUser) return;
 
-  const messagesQuery = query(collection(db, "chats"), orderBy("timestamp", "asc"));
-  onSnapshot(messagesQuery, (snapshot) => {
+  // cleanup old listener
+  if (unsubscribeChat) unsubscribeChat();
+
+  const messagesQuery = query(
+    collection(db, "chats"),
+    orderBy("timestamp", "asc")
+  );
+
+  unsubscribeChat = onSnapshot(messagesQuery, (snapshot) => {
     chatMessagesEl.innerHTML = "";
     lastMessageDate = null;
 
     snapshot.forEach((docSnap) => {
       const msg = docSnap.data();
-      if ((msg.from === auth.currentUser.email && msg.to === "admin") ||
-          (msg.from === "admin" && msg.to === auth.currentUser.email)) {
 
+      if (
+        (msg.from === auth.currentUser.email && msg.to === "admin") ||
+        (msg.from === "admin" && msg.to === auth.currentUser.email)
+      ) {
         const msgDate = msg.timestamp?.toDate().toDateString();
-        const msgTime = msg.timestamp?.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) || "";
+        const msgTime =
+          msg.timestamp
+            ?.toDate()
+            .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) || "";
 
+        // date separator
         if (lastMessageDate !== msgDate && msgDate) {
           const dateSeparator = document.createElement("div");
           dateSeparator.classList.add("date-separator");
@@ -55,8 +73,12 @@ function loadChat() {
           lastMessageDate = msgDate;
         }
 
+        // message bubble
         const messageDiv = document.createElement("div");
-        messageDiv.classList.add("message", msg.from === "admin" ? "admin" : "student");
+        messageDiv.classList.add(
+          "message",
+          msg.from === "admin" ? "admin" : "student"
+        );
 
         const textSpan = document.createElement("span");
         textSpan.classList.add("text");
@@ -75,7 +97,8 @@ function loadChat() {
     if (chatMessagesEl.innerHTML.trim() === "") {
       chatMessagesEl.innerHTML = `<div class="no-chat">Start chatting with admin...</div>`;
     }
-    scrollToBottom(true);
+
+    scrollToBottom(); // only scroll if near bottom
   });
 }
 
@@ -103,18 +126,27 @@ sendMessageBtn.addEventListener("click", async () => {
 // ===== Typing indicator =====
 chatInputEl.addEventListener("input", async () => {
   if (!auth.currentUser) return;
-  await setDoc(doc(db, "status", auth.currentUser.email), {
-    typing: true,
-    lastSeen: serverTimestamp()
-  }, { merge: true });
+
+  await setDoc(
+    doc(db, "status", auth.currentUser.email),
+    {
+      typing: true,
+      lastSeen: serverTimestamp(),
+    },
+    { merge: true }
+  );
 
   clearTimeout(typingTimeout);
   typingTimeout = setTimeout(async () => {
     if (!auth.currentUser) return;
-    await setDoc(doc(db, "status", auth.currentUser.email), {
-      typing: false,
-      lastSeen: serverTimestamp()
-    }, { merge: true });
+    await setDoc(
+      doc(db, "status", auth.currentUser.email),
+      {
+        typing: false,
+        lastSeen: serverTimestamp(),
+      },
+      { merge: true }
+    );
   }, 1500);
 });
 
@@ -130,30 +162,34 @@ function monitorAdminStatus() {
 // ===== Update student presence =====
 async function updatePresence() {
   if (!auth.currentUser) return;
-  await setDoc(doc(db, "status", auth.currentUser.email), {
-    online: true,
-    lastSeen: serverTimestamp()
-  }, { merge: true });
+  await setDoc(
+    doc(db, "status", auth.currentUser.email),
+    {
+      online: true,
+      lastSeen: serverTimestamp(),
+    },
+    { merge: true }
+  );
 }
 
 // ===== Initialize student status =====
 async function initStudentStatus() {
   if (!auth.currentUser) return;
 
-  // Initial presence
-  await updatePresence();
+  await updatePresence(); // Initial presence
+  setInterval(updatePresence, 5000); // ping every 5 sec
 
-  // Ping presence every 5 seconds
-  setInterval(updatePresence, 5000);
-
-  // Mark offline on close or reload
   window.addEventListener("beforeunload", async () => {
     if (!auth.currentUser) return;
-    await setDoc(doc(db, "status", auth.currentUser.email), {
-      online: false,
-      typing: false,
-      lastSeen: serverTimestamp()
-    }, { merge: true });
+    await setDoc(
+      doc(db, "status", auth.currentUser.email),
+      {
+        online: false,
+        typing: false,
+        lastSeen: serverTimestamp(),
+      },
+      { merge: true }
+    );
   });
 }
 
@@ -164,6 +200,7 @@ auth.onAuthStateChanged((user) => {
     loadChat();
     monitorAdminStatus();
   } else {
+    if (unsubscribeChat) unsubscribeChat();
     chatMessagesEl.innerHTML = `<div class="no-chat">Please login to start chatting.</div>`;
   }
 });
