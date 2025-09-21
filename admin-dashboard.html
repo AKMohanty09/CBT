@@ -90,33 +90,39 @@
 
     <!-- CHAT -->
     <section id="chatSection" class="tab-content">
-      <div class="chat-container">
-        <!-- Student List -->
-        <div class="student-list" id="studentListWrapper">
-          <h3>Students</h3>
-          <ul id="studentList"></ul>
-        </div>
+  <div class="chat-container">
+    <!-- Student List -->
+    <div class="student-list" id="studentListWrapper">
+      <h3>Students</h3>
+      <ul id="studentList"></ul>
+    </div>
 
-        <!-- Chat Window -->
-        <div class="chat-window" id="chatWindow">
-          <div class="chat-header">
-            <button class="back-btn" id="backBtn">&#8592;</button>
-            <span id="chatTitle">Select a student</span>
-            <div class="status-row">
-              <span id="onlineIndicator">Online</span>
-              <span id="typingIndicator">typing...</span>
-            </div>
-          </div>
-          <div id="chatMessages" class="chat-messages">
-            <div class="no-chat">👉 Select a student to start chatting</div>
-          </div>
-          <div class="chat-input-area" id="chatInputArea">
-            <input type="text" id="chatInput" placeholder="Type a message..." />
-            <button id="sendMessageBtn">Send</button>
-          </div>
+    <!-- Chat Window -->
+    <div class="chat-window" id="chatWindow">
+      <div class="chat-header">
+        <button class="back-btn" id="backBtn">&#8592;</button>
+        <span id="chatTitle">Select a student</span>
+        <div class="status-row">
+          <span id="onlineIndicator">Online</span>
+          <span id="typingIndicator">typing...</span>
         </div>
+        <!-- Clear Chat Button -->
+        <button id="clearChatBtn" class="clear-chat-btn" title="Clear Chat">
+          <i class="fas fa-trash"></i>
+        </button>
       </div>
-    </section>
+
+      <div id="chatMessages" class="chat-messages">
+        <div class="no-chat">👉 Select a student to start chatting</div>
+      </div>
+
+      <div class="chat-input-area" id="chatInputArea">
+        <input type="text" id="chatInput" placeholder="Type a message..." />
+        <button id="sendMessageBtn">Send</button>
+      </div>
+    </div>
+  </div>
+</section>q
 
   </main>
 
