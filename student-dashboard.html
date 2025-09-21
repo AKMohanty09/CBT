@@ -66,15 +66,22 @@
         <span id="onlineIndicator" class="online-status">Offline</span>
         <span class="chat-title">Admin Chat</span>
         <span id="typingIndicator" class="typing-indicator">Typing...</span>
-  
+
+        <!-- Clear Chat Button -->
+        <button id="clearChatBtn" class="icon-btn" title="Clear Chat">
+          <span class="material-icons">delete_sweep</span>
+        </button>
       </div>
 
       <div id="chatMessages" class="chat-messages">
         <!-- Messages will be appended here -->
       </div>
+
       <div class="chat-input-area">
         <input type="text" id="chatInput" placeholder="Type a message..." />
-        <button id="sendMessageBtn">Send</button>
+        <button id="sendMessageBtn" class="icon-btn" title="Send">
+          <span class="material-icons">send</span>
+        </button>
       </div>
     </div>
   </div>
