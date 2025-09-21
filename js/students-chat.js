@@ -40,7 +40,6 @@ function scrollToBottom(force = false) {
     });
   }
 }
-
 // ===== Load chat messages =====
 function loadChat() {
   if (!auth.currentUser) return;
@@ -59,10 +58,14 @@ function loadChat() {
     snapshot.forEach((docSnap) => {
       const msg = docSnap.data();
 
-      if (
-        msg.participants?.includes(auth.currentUser.email) &&
-        msg.participants?.includes("admin")
-      ) {
+      // ✅ Show both old (from/to) and new (participants) messages
+      const isChatMsg =
+        (msg.from === auth.currentUser.email && msg.to === "admin") ||
+        (msg.from === "admin" && msg.to === auth.currentUser.email) ||
+        (msg.participants?.includes(auth.currentUser.email) &&
+          msg.participants?.includes("admin"));
+
+      if (isChatMsg) {
         const msgDate = msg.timestamp?.toDate().toDateString();
         const msgTime =
           msg.timestamp
