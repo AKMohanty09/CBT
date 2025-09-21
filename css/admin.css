@@ -1,24 +1,27 @@
-/* General */
+/* ==============================
+General
+============================== */
 body {
   font-family: 'Karla', sans-serif;
   margin: 0;
-  background-color: #121212; /* dark background */
-  color: #e0e0e0; /* light text */
+  background-color: #121212;
+  color: #e0e0e0;
 }
-
 
 h2 {
   margin-bottom: 1rem;
 }
 
-/* Navbar */
+/* ==============================
+Navbar
+============================== */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1b1b1b; /* dark navbar */
+  background-color: #1b1b1b;
   padding: 1rem 1.5rem;
-  color: #e0e0e0; /* light text */
+  color: #e0e0e0;
   position: fixed;
   width: 100%;
   top: 0;
@@ -26,13 +29,11 @@ h2 {
   box-sizing: border-box;
 }
 
-
 .nav-left {
   display: flex;
   align-items: center;
   gap: 1rem;
   flex-shrink: 0;
-  /* ✅ prevents it from growing and pushing logout */
 }
 
 .logo {
@@ -44,18 +45,16 @@ h2 {
   font-size: 1.5rem;
   background: none;
   border: none;
-  color: #e0e0e0; /* light text for dark mode */
+  color: #e0e0e0;
   cursor: pointer;
   display: none;
-  /* hidden on desktop */
 }
 
-
 .logout-btn {
-  background-color: #b91c1c; /* darker red for dark mode */
+  background-color: #b91c1c;
   border: none;
   padding: 0.5rem 1rem;
-  color: #ffffff; /* keep text light */
+  color: #ffffff;
   border-radius: 5px;
   cursor: pointer;
   flex-shrink: 0;
@@ -66,23 +65,23 @@ h2 {
   background-color: #dc2626;
 }
 
-/* Sidebar */
+/* ==============================
+Sidebar
+============================== */
 .sidebar {
   width: 220px;
-  background: #1b1b1b; /* dark sidebar */
+  background: #1b1b1b;
   height: 100vh;
   padding: 1rem;
   box-sizing: border-box;
   position: fixed;
   top: 60px;
-  /* below navbar */
   left: 0;
   display: flex;
   flex-direction: column;
-  z-index: 5;
-  /* above the student list */
   gap: 0.5rem;
   transition: transform 0.3s ease;
+  z-index: 5;
 }
 
 .sidebar button {
@@ -98,15 +97,17 @@ h2 {
 
 .sidebar button.active,
 .sidebar button:hover {
-  background: #2563eb; /* brighter blue for dark mode */
-  color: #ffffff; /* light text */
+  background: #2563eb;
+  color: #ffffff;
 }
 
-/* Main Content */
+/* ==============================
+Main Content
+============================== */
 .content {
   margin-left: 220px;
   padding: 80px 2rem 2rem;
-  /* top padding for fixed navbar */
+  box-sizing: border-box;
 }
 
 .tab-content {
@@ -117,7 +118,9 @@ h2 {
   display: block;
 }
 
-/* Form */
+/* ==============================
+Forms
+============================== */
 form .form-group {
   margin-bottom: 1rem;
 }
@@ -132,17 +135,17 @@ form input,
 form textarea {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #444; /* darker border for dark mode */
+  border: 1px solid #444;
   border-radius: 5px;
   font-size: 1rem;
+  background-color: #1f1f1f;
+  color: #e0e0e0;
   box-sizing: border-box;
-  background-color: #1f1f1f; /* dark input background */
-  color: #e0e0e0; /* light text */
 }
 
 form button.btn-primary {
-  background-color: #2563eb; /* brighter blue for dark mode */
-  color: #ffffff; /* light text */
+  background-color: #2563eb;
+  color: #ffffff;
   padding: 0.7rem 1.2rem;
   border: none;
   border-radius: 5px;
@@ -151,31 +154,39 @@ form button.btn-primary {
 }
 
 form button.btn-primary:hover {
-  background-color: #2563eb;
+  background-color: #1e40af;
 }
 
-/* Cards */
+/* ==============================
+Cards (Tests / Results)
+============================== */
 .cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1rem;
+  margin-top: 20px;
 }
 
-.test-card {
-  background-color: #1f1f1f; /* dark card background */
+.test-card,
+.result-card {
+  background-color: #1f1f1f;
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5); /* stronger shadow for dark theme */
-  color: #e0e0e0; /* light text inside card */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+  color: #e0e0e0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-
-.test-card-title {
+.test-card-title,
+.result-card-title {
   font-weight: bold;
   margin-bottom: 0.5rem;
+  font-size: 16px;
+  color: #e0e0e0;
 }
 
-.test-card-actions button {
+.test-card-actions button,
+.result-card .toggle-icon {
   margin: 0.3rem 0.3rem 0 0;
   padding: 0.4rem 0.7rem;
   border: none;
@@ -184,115 +195,31 @@ form button.btn-primary:hover {
 }
 
 .test-card-actions button:first-child {
-  background-color: #16a34a; /* keep green, visible on dark */
-  color: #ffffff;
+  background-color: #16a34a;
+  color: #fff;
 }
 
 .test-card-actions button:last-child {
-  background-color: #b91c1c; /* darker red for dark mode */
-  color: #ffffff;
+  background-color: #b91c1c;
+  color: #fff;
 }
 
-/* Mobile View */
-@media (max-width: 768px) {
-  .menu-toggle {
-    display: block;
-    /* show hamburger */
-  }
-
-  .sidebar {
-    transform: translateX(-100%);
-    top: 60px;
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  .content {
-    margin-left: 0;
-    padding: 80px 1rem 1rem;
-  }
-
-  form button.btn-primary {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .cards-container {
-    grid-template-columns: 1fr;
-  }
-
-  form input,
-  form textarea {
-    font-size: 0.95rem;
-  }
-
-  form button.btn-primary {
-    font-size: 0.95rem;
-    padding: 0.6rem;
-  }
-
-  .test-card-actions button {
-    padding: 0.3rem 0.6rem;
-  }
-}
-
-/* ===== Results Section Modern Styling ===== */
-.cards-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 16px;
-  margin-top: 20px;
-}
-
-.result-card {
-  background: #1f1f1f; /* dark card background */
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.5); /* stronger shadow for dark theme */
-  overflow: hidden;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  color: #e0e0e0; /* light text */
-}
-
+/* Collapsible result card */
 .result-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
   padding: 14px 18px;
-  border-bottom: 1px solid #444; /* darker border */
-  background: #262626; /* dark header */
-  transition: background 0.2s ease;
-}
-
-.result-card-header:hover {
-  background: #333333; /* slightly lighter hover */
-}
-
-.result-card-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #e0e0e0; /* light text for dark mode */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 80%;
-}
-
-.toggle-icon {
-  font-size: 16px;
-  color: #aaa; /* lighter gray for dark mode */
-  transition: transform 0.3s ease, color 0.2s ease;
+  border-bottom: 1px solid #444;
+  background: #262626;
 }
 
 .result-card.open .toggle-icon {
   transform: rotate(180deg);
-  color: #2563eb; /* keep blue highlight */
+  color: #2563eb;
 }
 
-/* Collapsible body */
 .result-card-body {
   max-height: 0;
   overflow: hidden;
@@ -304,127 +231,56 @@ form button.btn-primary:hover {
   padding: 16px;
 }
 
-/* Attempt styling */
+/* Attempt Card */
 .attempt-card {
-  background: #262626; /* dark background */
-  border-left: 4px solid #2563eb; /* keep blue highlight */
+  background: #262626;
+  border-left: 4px solid #2563eb;
   margin-bottom: 10px;
   padding: 12px;
   border-radius: 6px;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); /* stronger shadow for dark mode */
-  transition: border-color 0.3s ease, transform 0.2s ease, opacity 0.25s ease, background 0.2s ease;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+  color: #e0e0e0;
   cursor: grab;
   user-select: none;
   touch-action: pan-y;
-  will-change: transform;
-  color: #e0e0e0; /* light text */
 }
 
-.attempt-card:active {
-  cursor: grabbing;
-}
-
-/* visual feedback while dragging */
 .attempt-card.dragging {
-  background-color: #4b1b1b; /* dark red while dragging */
-  box-shadow: 0 6px 16px rgba(185, 28, 28, 0.4); /* stronger shadow for dark theme */
-  border-left-color: #b91c1c; /* darker red */
+  background-color: #4b1b1b;
+  box-shadow: 0 6px 16px rgba(185, 28, 28, 0.4);
+  border-left-color: #b91c1c;
 }
 
 .attempt-card h4 {
   margin: 0 0 6px;
   font-size: 14px;
   font-weight: 600;
-  color: #2563eb; /* keep blue highlight */
+  color: #2563eb;
 }
 
 .attempt-card p {
   margin: 4px 0;
   font-size: 13px;
-  color: #cccccc; /* light gray text */
+  color: #cccccc;
 }
 
 .result-time {
   font-size: 12px;
-  color: #999999; /* light gray */
+  color: #999999;
   margin-top: 4px;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .cards-container {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .result-card-title {
-    font-size: 15px;
-  }
-
-  .attempt-card {
-    padding: 10px;
-  }
-
-  .attempt-card h4 {
-    font-size: 13px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .attempt-card p {
-    font-size: 12px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
-@media (min-width: 992px) {
-  .cards-container {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-  }
-}
-
-/* Hide default file input */
-#csvFile {
-  display: none;
-}
-
-/* Style the label as a button */
-.form-group label[for="csvFile"] {
-  display: inline-block;
-  padding: 10px 18px;
-  background-color: #2563eb; /* brighter blue for dark mode */
-  color: #ffffff; /* light text */
-  font-weight: 600;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s;
-  font-size: 14px;
-  text-align: center;
-}
-
-/* Hover effect */
-.form-group label[for="csvFile"]:hover {
-  background-color: #1e40af; /* darker blue on hover */
-  transform: scale(1.03);
-}
-
-
-/* === Chat Container === */
+/* ==============================
+Chat System
+============================== */
 .chat-container {
   display: flex;
   height: 80vh;
   border-radius: 12px;
   overflow: hidden;
-  background: #f5f7fa;
-  position: relative;
-  /* allow sidebar absolute positioning */
+  background: #121212;
 }
 
-/* === Student List (Background content) === */
 .student-list {
   width: 30%;
   min-width: 200px;
@@ -433,20 +289,13 @@ form button.btn-primary:hover {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  flex-shrink: 0;
-  z-index: 1;
-  /* behind sidebar */
-  position: relative;
-  /* stays behind */
 }
 
 .student-list h3 {
   margin: 0;
   padding: 14px;
   background-color: #262d31;
-  color: #e1e1e1;
   font-size: 16px;
-  text-align: center;
   font-weight: 600;
   border-bottom: 1px solid #2a3a40;
 }
@@ -463,10 +312,26 @@ form button.btn-primary:hover {
   cursor: pointer;
   border-bottom: 1px solid #2a3a40;
   font-size: 14px;
+  position: relative;
 }
 
+.student-list li.active {
+  background-color: #2563eb;
+  color: #fff;
+}
 
-/* === Chat Window === */
+.unread-badge {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background-color: #dc2626;
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  display: none;
+}
+
 .chat-window {
   flex: 1;
   display: flex;
@@ -474,51 +339,19 @@ form button.btn-primary:hover {
   background-color: #121c21;
   border-radius: 0 12px 12px 0;
   overflow: hidden;
-  z-index: 2;
-  /* above the list but below sidebar when open */
-  position: relative;
 }
 
-/* Scrollbar for dark mode */
-.student-list ul::-webkit-scrollbar {
-  width: 6px;
-}
-
-.student-list ul::-webkit-scrollbar-thumb {
-  background-color: #444;
-  border-radius: 3px;
-}
-
-.student-list ul::-webkit-scrollbar-track {
-  background-color: #1f2c33;
-}
-
-/* === Chat Window === */
-.chat-window {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: #121c21; /* WhatsApp dark background */
-  border-radius: 0 12px 12px 0;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  color: #e1e1e1;
-}
-
-/* Chat Header */
 .chat-header {
   padding: 14px 16px;
-  background: #1a1a1a; /* Dark background */
-  color: #fff;
+  background: #1a1a1a;
   font-weight: bold;
   font-size: 16px;
   display: flex;
   flex-direction: column;
-  position: relative;
   border-bottom: 1px solid #333;
+  position: relative;
 }
 
-/* Back Button */
 .chat-header .back-btn {
   position: absolute;
   left: 10px;
@@ -529,24 +362,21 @@ form button.btn-primary:hover {
   color: #fff;
   font-size: 18px;
   cursor: pointer;
+  display: none;
 }
 
-/* Chat Title */
 .chat-header #chatTitle {
   font-weight: 600;
   font-size: 16px;
-  margin-left: 0;
-  /* Default for desktop */
+  text-align: center;
 }
 
-/* Status Row */
 .status-row {
   display: flex;
   align-items: center;
   font-size: 12px;
   margin-top: 4px;
   color: #ccc;
-  margin-left: 0; /* Default for desktop */
 }
 
 .status-row #onlineIndicator {
@@ -560,7 +390,6 @@ form button.btn-primary:hover {
   font-style: italic;
 }
 
-/* Clear Chat Button */
 .clear-chat-btn {
   position: absolute;
   right: 16px;
@@ -568,59 +397,16 @@ form button.btn-primary:hover {
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #d9534f; /* red */
+  color: #d9534f;
   font-size: 18px;
   cursor: pointer;
-  display: none; /* hidden until a student is selected */
+  display: none;
 }
 
 .clear-chat-btn:hover {
   color: #c9302c;
 }
 
-/* Font Awesome Icon inside the button */
-.clear-chat-btn i {
-  pointer-events: none;
-}
-
-/* ===== Responsive for Mobile ===== */
-@media (max-width: 768px) {
-  .chat-header #chatTitle,
-  .status-row {
-    margin-left: 40px; /* leave space for back button */
-  }
-
-  .chat-header .back-btn {
-    left: 10px;
-  }
-
-  .clear-chat-btn {
-    right: 40px; /* adjust to not overlap back button */
-    display: inline-flex;
-  }
-}
-
-/* Back Button for mobile only */
-.back-btn {
-  background: transparent;
-  border: none;
-  color: #e1e1e1;
-  font-size: 22px;
-  cursor: pointer;
-  display: none; /* visible on mobile only */
-}
-
-.chat-title {
-  flex: 1;
-  text-align: center;
-  font-weight: 600;
-  font-size: 16px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* === Chat Messages === */
 .chat-messages {
   flex-grow: 1;
   padding: 16px;
@@ -630,7 +416,6 @@ form button.btn-primary:hover {
   gap: 12px;
 }
 
-/* Messages Styling */
 .message {
   max-width: 70%;
   padding: 12px 18px;
@@ -642,19 +427,17 @@ form button.btn-primary:hover {
 }
 
 .message.admin {
-  background-color: #056162; /* Dark green for sent messages */
+  background-color: #056162;
   color: #e1e1e1;
   align-self: flex-end;
   border-bottom-right-radius: 6px;
-  animation: fadeIn 0.3s ease;
 }
 
 .message.student {
-  background-color: #262d31; /* Dark gray for received messages */
+  background-color: #262d31;
   color: #e1e1e1;
   align-self: flex-start;
   border-bottom-left-radius: 6px;
-  animation: fadeIn 0.3s ease;
 }
 
 .message .time {
@@ -666,7 +449,6 @@ form button.btn-primary:hover {
   color: #b0b0b0;
 }
 
-/* Date Separator */
 .date-separator {
   text-align: center;
   font-size: 12px;
@@ -694,7 +476,6 @@ form button.btn-primary:hover {
   right: 0;
 }
 
-/* === Chat Input Area === */
 .chat-input-area {
   display: flex;
   padding: 14px;
@@ -711,7 +492,6 @@ form button.btn-primary:hover {
   font-size: 14px;
   background-color: #262d31;
   color: #e1e1e1;
-  transition: all 0.3s ease;
 }
 
 .chat-input-area input:focus {
@@ -723,39 +503,35 @@ form button.btn-primary:hover {
   margin-left: 12px;
   padding: 12px 22px;
   border: none;
-  background-color: #056162; /* WhatsApp-like send button */
+  background-color: #056162;
   color: white;
   border-radius: 25px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.3s ease;
 }
 
-/* === Empty / No Chat State === */
-.no-chat {
-  text-align: center;
-  color: #777;
-  font-size: 14px;
-  margin-top: 20px;
-  padding: 20px;
-}
-
-/* === Animations === */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* === Responsive Design === */
+/* ==============================
+Responsive
+============================== */
 @media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .content {
+    margin-left: 0;
+    padding: 80px 1rem 1rem;
+  }
+
   .chat-container {
     flex-direction: column;
   }
@@ -772,8 +548,21 @@ form button.btn-primary:hover {
     border-radius: 0;
   }
 
-  .back-btn {
+  .chat-header .back-btn {
     display: inline-flex;
-    margin-right: 8px;
+  }
+}
+
+/* ==============================
+Animations
+============================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
