@@ -250,20 +250,32 @@ clearChatBtn.addEventListener("click", async () => {
   if (!selectedStudentEmail) return;
   if (!confirm(`Are you sure you want to clear chat with ${selectedStudentEmail}?`)) return;
 
-  const messagesQuery = query(
-    collection(db, "chats"),
-    where("participants", "array-contains", selectedStudentEmail)
-  );
+  try {
+    // Query all messages between admin and selected student
+    const messagesQuery = query(
+      collection(db, "chats"),
+      where("participants", "array-contains", selectedStudentEmail)
+    );
 
-  const snapshot = await getDocs(messagesQuery);
-  const batchDeletes = [];
-  snapshot.forEach((docSnap) => {
-    batchDeletes.push(deleteDoc(doc(db, "chats", docSnap.id)));
-  });
+    const snapshot = await getDocs(messagesQuery);
+    const batchDeletes = [];
 
-  await Promise.all(batchDeletes);
+    snapshot.forEach((docSnap) => {
+      const msg = docSnap.data();
+      // Only delete messages where participants contain both admin & selected student
+      if (msg.participants.includes("admin") && msg.participants.includes(selectedStudentEmail)) {
+        batchDeletes.push(deleteDoc(doc(db, "chats", docSnap.id)));
+      }
+    });
 
-  chatMessagesEl.innerHTML = `<div class="no-chat">Chat cleared with ${selectedStudentEmail}</div>`;
+    await Promise.all(batchDeletes);
+
+    chatMessagesEl.innerHTML = `<div class="no-chat">Chat cleared with ${selectedStudentEmail}</div>`;
+    alert("Chat cleared for both sides successfully!");
+  } catch (err) {
+    console.error("Error clearing chat:", err);
+    alert("Failed to clear chat. Try again!");
+  }
 });
 
 // ---------------- Initialize Admin Status ----------------
