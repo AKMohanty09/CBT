@@ -1,0 +1,676 @@
+/* ==============================
+   Google Fonts
+============================== */
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;700&display=swap');
+
+/* ==============================
+   General Reset
+============================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Karla', Arial, sans-serif;
+  transition: all 0.2s ease;
+}
+
+/* ==============================
+   Body & Base
+============================== */
+body {
+  background-color: #121c21;
+  color: #e1e1e1;
+  font-size: 14px;
+}
+
+/* ==============================
+   Navbar / Header
+============================== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #121c21;
+  color: #e1e1e1;
+  padding: 15px 25px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.menu-toggle {
+  font-size: 1.6rem;
+  color: #e1e1e1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: none;
+}
+
+.logout-btn {
+  padding: 8px 18px;
+  background: #056162;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #128c7e;
+  transform: translateY(-2px);
+}
+
+/* ==============================
+   Sidebar
+============================== */
+.sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 220px;
+  height: calc(100% - 60px);
+  background: #1f2c33;
+  padding-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1000;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar button.tab-btn {
+  background: none;
+  border: none;
+  color: #e1e1e1;
+  padding: 14px 20px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 6px;
+}
+
+.sidebar button.tab-btn.active,
+.sidebar button.tab-btn:hover {
+  background: #056162;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* ==============================
+   Main Content
+============================== */
+.content {
+  margin-left: 220px;
+  padding: 25px;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ==============================
+   Cards
+============================== */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* --- Test Card --- */
+.test-card {
+  background: #1f2c33;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease;
+}
+
+.test-card:hover {
+  transform: translateY(-3px);
+}
+
+.test-card-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #e1e1e1;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.test-card p {
+  font-size: 1rem;
+  color: #c7c7c7;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.start-test-btn {
+  background-color: #056162;
+  color: white;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.start-test-btn:hover {
+  background-color: #128c7e;
+}
+
+/* --- Result Card --- */
+.result-card {
+  position: relative;
+  background: #1f2c33;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  border-left: 5px solid #056162;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.2s ease;
+}
+
+.result-card:hover {
+  transform: translateY(-3px);
+}
+
+.result-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #e1e1e1;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.result-card p {
+  font-size: 1rem;
+  color: #c7c7c7;
+}
+
+.result-card p b {
+  color: #056162;
+}
+
+.result-card .result-time {
+  font-size: 0.85rem;
+  color: #777;
+  text-align: center;
+}
+
+/* --- Delete Button --- */
+.delete-result-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #ef233c;
+  transition: color 0.2s ease;
+}
+
+.delete-result-btn:hover {
+  color: #d90429;
+}
+
+/* ==============================
+   Overlay
+============================== */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.overlay-content {
+  background: #121c21;
+  border-radius: 14px;
+  padding: 30px 35px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  text-align: center;
+}
+
+.close-overlay {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #ef233c;
+}
+
+.close-overlay:hover {
+  color: #d90429;
+}
+
+.overlay-content h2 {
+  font-size: 1.7rem;
+  color: #e1e1e1;
+  margin-bottom: 8px;
+}
+
+.overlay-content p {
+  font-size: 1rem;
+  color: #c7c7c7;
+}
+
+.marking-scheme {
+  list-style-type: disc;
+  margin: 8px 0 0 20px;
+  padding: 0;
+  text-align: left;
+  color: #e1e1e1;
+}
+
+.btn-primary {
+  background: #056162;
+  color: #ffffff;
+  border: none;
+  padding: 12px 22px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: #128c7e;
+}
+
+/* ==============================
+   Chat Styles
+============================== */
+.chat-container {
+  display: flex;
+  height: 80vh;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #121c21;
+  color: #e1e1e1;
+}
+
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #121c21;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #1f2c33;
+  color: #ffffff;
+  position: relative;
+  border-radius: 12px 12px 0 0;
+  font-family: 'Karla', sans-serif;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.chat-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 600;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.online-status {
+  font-size: 12px;
+}
+
+.online-status.offline {
+  color: #777;
+}
+
+.typing-indicator {
+  font-size: 12px;
+  color: #bbb;
+  display: none;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #121c21;
+}
+
+.message {
+  max-width: 70%;
+  padding: 12px 18px;
+  border-radius: 20px;
+  font-size: 14px;
+  word-wrap: break-word;
+  position: relative;
+}
+
+.message.admin {
+  background-color: #262d31;
+  color: #e1e1e1;
+  align-self: flex-start;
+  border-bottom-left-radius: 6px;
+}
+
+.message.student {
+  background-color: #056162;
+  color: #e1e1e1;
+  align-self: flex-end;
+  border-bottom-right-radius: 6px;
+}
+
+.message .time {
+  display: block;
+  font-size: 11px;
+  margin-top: 4px;
+  opacity: 0.6;
+  text-align: right;
+}
+
+.date-separator {
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  margin: 12px 0;
+  position: relative;
+  font-weight: 500;
+}
+
+.date-separator::before,
+.date-separator::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: #444;
+}
+
+.date-separator::before {
+  left: 0;
+}
+
+.date-separator::after {
+  right: 0;
+}
+
+.chat-input-area {
+  display: flex;
+  padding: 14px;
+  border-top: 1px solid #2a3a40;
+  background: #1f2c33;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 14px 16px;
+  border: 1px solid #444;
+  border-radius: 25px;
+  outline: none;
+  font-size: 14px;
+  background-color: #262d31;
+  color: #e1e1e1;
+}
+
+.chat-input-area input:focus {
+  border-color: #056162;
+  box-shadow: 0 0 8px rgba(5, 97, 98, 0.5);
+}
+
+.chat-input-area button {
+  margin-left: 12px;
+  padding: 12px 22px;
+  border: none;
+  background-color: #056162;
+  color: white;
+  border-radius: 25px;
+}
+
+.chat-input-area button:hover {
+  background-color: #128c7e;
+}
+
+/* ==============================
+   Responsive Layout
+============================== */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .content {
+    margin-left: 0;
+    padding: 15px;
+  }
+
+  .cards-container {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+  }
+
+  .test-card,
+  .result-card {
+    padding: 18px;
+  }
+
+  .start-test-btn,
+  .btn-primary {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+
+  .overlay-content {
+    padding: 20px 25px;
+  }
+
+  .overlay-content h2 {
+    font-size: 1.4rem;
+  }
+
+  .chat-container {
+    flex-direction: column;
+  }
+
+  .chat-messages {
+    padding: 12px;
+    max-height: 75vh;
+  }
+
+  .chat-input-area input {
+    padding: 12px 14px;
+  }
+
+  .chat-input-area button {
+    padding: 12px 18px;
+  }
+}
+
+
+/* =================== Custom Alert Container =================== */
+#customAlertContainer {
+  position: fixed;
+  top: 20px;
+  /* Distance from top */
+  left: 50%;
+  transform: translateX(-50%);
+  /* horizontally center */
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* spacing between stacked alerts */
+  max-width: 90%;
+  pointer-events: none;
+  width: auto;
+  align-items: center;
+  /* ensure alerts are centered */
+}
+
+/* =================== Individual Alert =================== */
+.custom-alert {
+  pointer-events: all;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 16px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 240px;
+  /* small screens */
+  max-width: 400px;
+  width: 100%;
+  /* take full width up to max-width */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+  color: white;
+  border-left: 5px solid;
+  animation: slideDown 0.4s ease forwards;
+  transform: translateY(-60px);
+  /* start above the top */
+}
+
+/* =================== Alert Types =================== */
+.custom-alert.success {
+  border-color: #4caf50;
+  box-shadow: 0 0 18px #4caf50;
+}
+
+.custom-alert.error {
+  border-color: #f44336;
+  box-shadow: 0 0 18px #f44336;
+}
+
+.custom-alert.warning {
+  border-color: #ff9800;
+  box-shadow: 0 0 18px #ff9800;
+}
+
+.custom-alert.confirm {
+  border-color: #f44336;
+  box-shadow: 0 0 18px #f44336;
+}
+
+/* =================== Buttons in Confirm Dialog =================== */
+.custom-alert .alert-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.custom-alert button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.custom-alert button.confirm-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.custom-alert button.cancel-btn {
+  background-color: #555;
+  color: white;
+}
+
+.custom-alert button.confirm-btn:hover {
+  filter: brightness(1.1);
+}
+
+.custom-alert button.cancel-btn:hover {
+  filter: brightness(1.2);
+}
+
+/* =================== Animations =================== */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-60px);
+    /* start above */
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    /* slide down to top */
+  }
+}
+
+/* =================== Responsive =================== */
+@media (max-width: 500px) {
+  #customAlertContainer {
+    max-width: 95%;
+  }
+
+  .custom-alert {
+    min-width: 220px;
+    padding: 14px 18px;
+  }
+
+  .custom-alert button {
+    padding: 5px 12px;
+  }
+}
