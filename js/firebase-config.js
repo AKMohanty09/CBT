@@ -14,12 +14,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBmr4O_aIdTl9TEnugVUhm93aG9YLlHtok",
-  authDomain: "teacheradminapp.firebaseapp.com",
-  projectId: "teacheradminapp",
-  storageBucket: "teacheradminapp.appspot.com",
-  messagingSenderId: "1070459298316",
-  appId: "1:1070459298316:web:7c281e12053c972f024429"
+  apiKey: "AIzaSyBGaFROqcmDd2iK9co1ggdo5vsYXHuY0XY",
+  authDomain: "english-with-piyush-gfs9z7.firebaseapp.com",
+  projectId: "english-with-piyush-gfs9z7",
+  storageBucket: "english-with-piyush-gfs9z7.firebasestorage.app",
+  messagingSenderId: "282716431728",
+  appId: "1:282716431728:web:2be3e17b50e29e04cc1bb5"
 };
 
 // Initialize Firebase
